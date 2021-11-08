@@ -1,0 +1,61 @@
+name: isc-dhcp-relay-lhartung
+base: core18
+version: "4.4.1"
+summary: ISC DHCP relay daemon
+description: |
+  The Internet Systems Consortium DHCP Relay Agent, dhcrelay, provides a means
+  for relaying DHCP and BOOTP requests from a subnet to which no DHCP server is
+  directly connected to one  or  more DHCP servers on other subnets.  It
+  supports both DHCPv4/BOOTP and DHCPv6 protocols.
+
+  After installing, it is necessary to connect the network-control interface
+  and set the appropriate DHCP server address. After running the following two
+  commands, the DHCP relay agent will run automatically.
+
+  snap connect isc-dhcp-relay-lhartung:network-control
+  snap set isc-dhcp-relay-lhartung server="<server address>"
+
+grade: stable
+confinement: strict
+
+apps:
+  dhcrelay:
+    command: bin/start-dhcrelay.sh
+    daemon: simple
+    plugs:
+      - network-bind
+      - network-control
+
+hooks:
+  configure:
+    plugs: [network]
+  install:
+    plugs: [network]
+
+parts:
+  scripts:
+    plugin: dump
+    source: scripts
+    organize:
+      start-dhcrelay.sh: bin/start-dhcrelay.sh
+
+  dhcrelay:
+    # See 'snapcraft plugins'
+    plugin: nil
+    stage-packages:
+      - isc-dhcp-relay
+    filesets:
+      binaries:
+        - usr/sbin/dhcrelay
+      libraries:
+        - lib/$SNAPCRAFT_ARCH_TRIPLET/libirs-export.so.*
+        - lib/$SNAPCRAFT_ARCH_TRIPLET/libdns-export.so.*
+        - lib/$SNAPCRAFT_ARCH_TRIPLET/libisc-export.so.*
+        - lib/$SNAPCRAFT_ARCH_TRIPLET/libisccfg-export.so.*
+    stage:
+      - $binaries
+      - $libraries
+    prime:
+      - $binaries
+      - $libraries
+

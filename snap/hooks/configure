@@ -1,0 +1,7 @@
+#!/bin/sh
+
+server="$(snapctl get server)"
+
+if [ -n "$server" ]; then
+    snapctl restart $SNAP_NAME.dhcrelay
+fi

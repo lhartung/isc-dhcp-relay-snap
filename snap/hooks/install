@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# This script does some one-time tasks when the snap is installed for the first
+# time.  After the first install, it will not be run again for version upgrades
+# unless the snap is completely removed and reinstalled.
+#
